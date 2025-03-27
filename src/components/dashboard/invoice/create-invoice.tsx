@@ -3,6 +3,8 @@ import {
     Box, Card, CardContent, Typography, TextField, Button, Select,
     MenuItem, InputLabel, FormControl, Grid, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, Paper, IconButton,
+    Backdrop,
+    CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSelector } from "react-redux";
@@ -72,12 +74,14 @@ const CreateInvoice: React.FC = () => {
     const [openPreview, setOpenPreview] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
     const [invoiceId, setInvoiceId] = useState<string | null>("")
+    const [loading, setLoading] = useState<boolean>(true); // Loader state
 
     const authToken = useSelector((state: RootState) => state.auth.refreshToken);
 
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
                 const customerRes = await axios.get(`${API_URL}/customer`, {
                     headers: { Authorization: `Bearer ${authToken}` },
@@ -95,6 +99,9 @@ const CreateInvoice: React.FC = () => {
                 setInvoiceConfig(configRes.data.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
+            }
+            finally {
+                setLoading(false);
             }
         };
         fetchData();
@@ -135,6 +142,9 @@ const CreateInvoice: React.FC = () => {
 
     return (
         <Box sx={{ p: 2 }}>
+             <Backdrop open={loading} sx={{ color: "#fff", zIndex: 1301 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h5" fontWeight={500}>Create Invoice</Typography>
             </Box>

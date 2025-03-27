@@ -128,7 +128,7 @@ const PreviewInvoice = (props) => {
 
             if (response.status === 200 || response.status === 201) {
                 toast.success('Invoice saved successfully!'); // Show success toast
-                setTimeout(() => navigate("/create-invoice"), 2000);
+                setTimeout(() => navigate("/invoices"), 2000);
             } else {
                 toast.error(response.data?.message); // Show error toast
             }

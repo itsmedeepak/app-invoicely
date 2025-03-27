@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-  Box, Button, Typography, IconButton
+  Box, Button, Typography, IconButton, Backdrop, CircularProgress
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -29,11 +29,13 @@ const formatDate = (isoString: string) => {
 
 export const Invoices: React.FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const authToken = useSelector((state: RootState) => state.auth.refreshToken);
 
   useEffect(() => {
     const fetchInvoices = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${API_URL}/invoice`, {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -48,10 +50,10 @@ export const Invoices: React.FC = () => {
           status: inv.payment_status === "Paid" ? "Completed" : "Payment Due",
           createdAt: formatDate(inv.created_at),
         })));
-
       } catch (error) {
         console.error("Error fetching invoices:", error);
       }
+      setLoading(false);
     };
 
     fetchInvoices();
@@ -60,8 +62,6 @@ export const Invoices: React.FC = () => {
   const handleOpenCreate = () => {
     navigate("/create-invoice");
   };
-
-
 
   const handleDeleteInvoice = async (id: string) => {
     try {
@@ -89,9 +89,6 @@ export const Invoices: React.FC = () => {
       headerAlign: 'center',
       renderCell: (params) => (
         <Box display="flex" justifyContent="center" gap={1}>
-          {/* <IconButton color="primary" onClick={() => handleEditInvoice(params.row.id)}>
-            <EditIcon />
-          </IconButton> */}
           <IconButton color="error" onClick={() => handleDeleteInvoice(params.row.id)}>
             <DeleteIcon />
           </IconButton>
@@ -102,6 +99,11 @@ export const Invoices: React.FC = () => {
 
   return (
     <Box sx={{ p: 2 }}>
+      {/* Fullscreen Backdrop Loader */}
+      <Backdrop open={loading} sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5" fontWeight={500}>
           Invoices

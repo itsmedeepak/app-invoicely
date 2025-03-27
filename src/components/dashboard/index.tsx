@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
     Box,
-    Grid,
     Card,
     CardContent,
     Typography,
     Stack,
     Container,
+    CircularProgress,
+    Backdrop,
+    Grid
 } from '@mui/material';
 import PaymentIcon from '@mui/icons-material/Payment';
 import ReceiptIcon from '@mui/icons-material/Receipt';
@@ -23,26 +25,6 @@ import { Line } from 'react-chartjs-2';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-const MetricCards = ({ metrics }) => (
-    <Grid container spacing={3} mb={3}>
-        {metrics.map((metric, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-                <Card elevation={3}>
-                    <CardContent>
-                        <Stack direction="row" alignItems="center" spacing={2}>
-                            {metric.icon}
-                            <Box>
-                                <Typography variant="subtitle1">{metric.title}</Typography>
-                                <Typography variant="h5">{metric.value}</Typography>
-                            </Box>
-                        </Stack>
-                    </CardContent>
-                </Card>
-            </Grid>
-        ))}
-    </Grid>
-);
-
 const Dashboard = () => {
     const [invoiceData, setInvoiceData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -50,7 +32,7 @@ const Dashboard = () => {
         { title: 'Pending Invoices', value: 0, icon: <ReceiptIcon color="warning" /> },
         { title: 'Paid Invoices', value: 0, icon: <PaymentIcon color="success" /> },
         { title: 'Today Sent', value: 0, icon: <SendIcon color="info" /> },
-        { title: 'Payments Collected', value: 0, icon: <TrendingUpIcon color="primary" /> },
+        { title: 'Payment Collected', value: 0, icon: <TrendingUpIcon color="primary" /> },
     ]);
 
     const authToken = useSelector((state: RootState) => state.auth.refreshToken);
@@ -79,7 +61,7 @@ const Dashboard = () => {
                         { title: 'Pending Invoices', value: pendingInvoices, icon: <ReceiptIcon color="warning" /> },
                         { title: 'Paid Invoices', value: paidInvoices, icon: <PaymentIcon color="success" /> },
                         { title: 'Today Sent', value: todaySent, icon: <SendIcon color="info" /> },
-                        { title: 'Payments Collected', value: totalRevenue, icon: <TrendingUpIcon color="primary" /> },
+                        { title: 'Sales', value: `$${totalRevenue.toFixed()}`, icon: <TrendingUpIcon color="primary" /> },
                     ]);
                 }
             } catch (error) {
@@ -92,7 +74,7 @@ const Dashboard = () => {
     }, [authToken]);
 
     // Group revenue data by month
-    const revenueByMonth = Array(12).fill(0); // Initialize an array with 12 zeros
+    const revenueByMonth = Array(12).fill(0);
 
     invoiceData.forEach(invoice => {
         const date = new Date(invoice.created_at);
@@ -118,17 +100,40 @@ const Dashboard = () => {
 
     return (
         <Container maxWidth="xl" sx={{ py: 4 }}>
+            {/* Fullscreen Backdrop Loader */}
+            <Backdrop open={loading} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
             <Typography variant="h5" gutterBottom>
                 Invoicing Dashboard
             </Typography>
 
-            {loading ? <Typography>Loading...</Typography> : <MetricCards metrics={metrics} />}
+            {/* Responsive Metrics Cards */}
+            <Grid container spacing={3} sx={{ mb: 3 }}>
+                {metrics.map((metric, index) => (
+                    <Grid item xs={12} sm={6} md={3} key={index}>
+                        <Card elevation={3} sx={{ height: '100%' }}>
+                            <CardContent>
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                    {metric.icon}
+                                    <Box>
+                                        <Typography variant="subtitle1">{metric.title}</Typography>
+                                        <Typography variant="h5">{metric.value}</Typography>
+                                    </Box>
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
 
+            {/* Revenue Chart */}
             <Card>
                 <CardContent>
-                <Typography variant="h6" gutterBottom>
-    Monthly Revenue Trend for {currentYear}
-</Typography>
+                    <Typography variant="h6" gutterBottom>
+                        Monthly Revenue Trend for {currentYear}
+                    </Typography>
                     <Box sx={{ height: 300 }}>
                         <Line data={revenueData} options={{ maintainAspectRatio: false }} />
                     </Box>

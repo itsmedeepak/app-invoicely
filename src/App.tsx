@@ -23,7 +23,7 @@ export default function App() {
       branding={{
         logo: <ReceiptIcon fontSize="large" color="primary" />,
         title: 'Invoicely',
-        homeUrl: '/dashboard',
+        homeUrl: '/',
       }}
     >
         <ToastContainer position="bottom-center" autoClose={3000} />

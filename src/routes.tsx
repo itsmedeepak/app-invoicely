@@ -14,52 +14,10 @@ import { Invoices } from './components/dashboard/invoice';
 import Dashboard from './components/dashboard';
 import SalesAndInvoicesReport from './components/report';
 import Configuration from './components/configuration';
+import HelpSection from './components/help';
+import NotFoundPage from './components/404';
+import ComingSoonPage from './components/comming-soon';
 
-// Demo components
-
-
-export const DashboardPage = () => (
-    <div>
-        <h1>Dashboard</h1>
-        <p>Overview of your invoices, customers, and sales.</p>
-    </div>
-);
-
-
-
-
-
-
-
-export const Sales = () => (
-    <div>
-        <h1>Sales Report</h1>
-        <p>Sales data and analytics go here.</p>
-    </div>
-);
-
-export const Traffic = () => (
-    <div>
-        <h1>Traffic Report</h1>
-        <p>Website traffic statistics displayed here.</p>
-    </div>
-);
-
-export const Integrations = () => (
-    <div>
-        <h1>Integrations</h1>
-        <p>Manage your app integrations here. (Coming Soon)</p>
-    </div>
-);
-
-export const NotFound = () => (
-    <div>
-        <h1>404 - Not Found</h1>
-        <p>The page you're looking for doesn't exist.</p>
-    </div>
-);
-
-// Create router config
 export const RouterConfig = createBrowserRouter([
     {
       path: '/',
@@ -79,6 +37,9 @@ export const RouterConfig = createBrowserRouter([
             { path: 'profile', Component: UserProfile },
             { path: 'subscriptions', Component: Subscription },
             { path: 'billing', Component: Billing },
+            { path: 'help-center', Component: HelpSection },
+            { path: 'integrations', Component: ComingSoonPage},
+            
           ],
         },
         {
@@ -91,7 +52,7 @@ export const RouterConfig = createBrowserRouter([
         },
         {
           path: '*',
-          Component: NotFound,
+          Component: NotFoundPage,
         },
       ],
     },
