@@ -39,6 +39,7 @@ export type Customer = {
 };
 
 export type Product = {
+  quantity: any;
   _id: string;
   user_id: string;
   name: string;

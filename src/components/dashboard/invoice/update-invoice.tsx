@@ -19,12 +19,13 @@ import {
     TableRow,
     Paper,
     IconButton,
+    SelectChangeEvent,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-// Dummy customer data
+
 const customers = [
     {
         name: "John Doe",
@@ -58,15 +59,15 @@ const UpdateInvoice: React.FC = () => {
     const [productList, setProductList] = React.useState<typeof products>([]);
     const invoiceRef = useRef<HTMLDivElement>(null);
 
-    const handlePaymentChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const handlePaymentChange = (event: SelectChangeEvent<string>) => {
         setPaymentMethod(event.target.value as string);
     };
-
-    const handleCustomerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setSelectedCustomer(event.target.value as string);
+    
+    const handleCustomerChange = (event: SelectChangeEvent<string>) => {
+        setSelectedCustomer(event.target.value);
     };
-
-    const handleProductChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    
+    const handleProductChange = (event: SelectChangeEvent<string>) => {
         setSelectedProduct(event.target.value as string);
     };
 

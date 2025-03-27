@@ -4,7 +4,6 @@ import {
   Box, Button, Typography, IconButton
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +39,7 @@ export const Invoices: React.FC = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         const invoices = [...(response.data.data || [])].reverse();
-        setInvoices(invoices.map((inv: any) => ({
+        setInvoices(invoices.map((inv) => ({
           id: inv.invoice_id,
           customerName: `${inv.customer?.first_name || ''} ${inv.customer?.last_name || ''}`.trim(),
           customerEmail: inv.customer?.email || "N/A",
@@ -49,11 +48,12 @@ export const Invoices: React.FC = () => {
           status: inv.payment_status === "Paid" ? "Completed" : "Payment Due",
           createdAt: formatDate(inv.created_at),
         })));
+
       } catch (error) {
         console.error("Error fetching invoices:", error);
       }
     };
-    
+
     fetchInvoices();
   }, [authToken]);
 
@@ -61,11 +61,8 @@ export const Invoices: React.FC = () => {
     navigate("/create-invoice");
   };
 
-  const handleEditInvoice = (id: string) => {
-    navigate(`/edit-invoice/${id}`);
-  };
 
-  
+
   const handleDeleteInvoice = async (id: string) => {
     try {
       await axios.delete(`${API_URL}/invoice/${id}`, {

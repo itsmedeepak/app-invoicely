@@ -75,7 +75,7 @@ export const Products = () => {
         category: '',
         price: '',
         discount: '',
-        currency: '', 
+        currency: '',
         product_image: ''
     });
 
@@ -118,7 +118,7 @@ export const Products = () => {
         setSelectedProduct(null);
     };
 
-    const handleFormChange = (field: string, value: any) => {
+    const handleFormChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 

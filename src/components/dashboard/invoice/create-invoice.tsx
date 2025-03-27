@@ -1,12 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import {
     Box, Card, CardContent, Typography, TextField, Button, Select,
     MenuItem, InputLabel, FormControl, Grid, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, Paper, IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import axios from "axios";
@@ -16,7 +14,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Dialog, DialogContent } from "@mui/material";
 import PreviewInvoice from "./preview-invoice";
-import ReactToPdf from 'react-to-pdf';
 
 interface Customer {
     _id: string;
@@ -52,6 +49,9 @@ interface InvoiceConfig {
     email: string;
     logo_url: string;
     country: string;
+    user_id: string;
+    created_at: string;
+    updated_at: string;
 }
 
 function generateInvoiceId(): string {
@@ -71,10 +71,10 @@ const CreateInvoice: React.FC = () => {
     const [invoiceGeneratedBy, SetInvoiceGeneratedBy] = useState<string | null>(null);
     const [openPreview, setOpenPreview] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
-    const [invoiceId, setInvoiceId] = useState<string |null>("")
+    const [invoiceId, setInvoiceId] = useState<string | null>("")
 
     const authToken = useSelector((state: RootState) => state.auth.refreshToken);
-    
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -105,9 +105,7 @@ const CreateInvoice: React.FC = () => {
     const [issuedDate, setIssuedDate] = useState<Date | null>(new Date());
     const [dueDate, setDueDate] = useState<Date | null>(new Date());
     const [quantity, setQuantity] = useState<number>(1);
-    const handlePreview = () => {
-        setOpenPreview(true);
-    };
+
 
     const addProduct = () => {
         const product = productList.find((prod) => prod._id === selectedProductId);
@@ -125,15 +123,15 @@ const CreateInvoice: React.FC = () => {
 
     const calculateTotal = () => {
         return addedProducts.reduce((total, item) => {
-            const discountedPrice = item.price - (item.price * item.discount) / 100;
+            const discountedPrice = Math.max(0, item.price - (item.price * (item.discount ?? 0)) / 100);
+            console.log(discountedPrice)
             return total + (discountedPrice * item.quantity);
         }, 0);
     };
 
 
-   
-  
     const currencySymbol = addedProducts[0]?.currency || "₹";
+
 
     return (
         <Box sx={{ p: 2 }}>
@@ -356,20 +354,19 @@ const CreateInvoice: React.FC = () => {
                 </CardContent>
 
                 <Box mt={3} textAlign="right" display="flex" justifyContent="flex-end" gap={2}>
-                    
+
                     <Button variant="contained" sx={{ p: 1 }} onClick={() => setOpenPreview(true)}>
                         Preview Invoice
                     </Button>
                 </Box>
 
-                <Dialog   open={openPreview} onClose={() => setOpenPreview(false)} fullWidth maxWidth="md">
+                <Dialog open={openPreview} onClose={() => setOpenPreview(false)} fullWidth maxWidth="md">
                     <DialogContent>
                         <PreviewInvoice
-                            
                             invoiceId={invoiceId}
                             invoiceConfig={invoiceConfig}
-                            issuedDate={issuedDate}
-                            dueDate={dueDate}
+                            issuedDate={issuedDate ? issuedDate.toLocaleDateString() : ''}
+                            dueDate={dueDate ? dueDate.toLocaleDateString() : ''}
                             paymentStatus={paymentStatus}
                             selectedCustomer={selectedCustomer}
                             addedProducts={addedProducts}

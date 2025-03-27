@@ -78,7 +78,7 @@ export const Customers: React.FC = () => {
             });
     
             // Extract customers from response.data.data
-            const customerList: Customer[] = response.data.data?.map((item: any) => ({
+            const customerList: Customer[] = response.data.data?.map((item) => ({
                 customerId: item._id,
                 userId: item.user_id,
                 email: item.email,

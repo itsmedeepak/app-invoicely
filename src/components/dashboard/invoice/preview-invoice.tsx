@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
     Box,
     Grid,
@@ -19,7 +19,7 @@ import {
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import { Customer, Product } from "../../../utils/types";
+// import { Customer, Product } from "../../../utils/types";
 import html2canvas from "html2canvas";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,22 +32,22 @@ const getCurrentTimestamp = () => {
     return now.toLocaleString();
 };
 
-interface PreviewInvoiceProps {
-    invoiceId: string;
-    invoiceConfig: InvoiceConfig;
-    issuedDate: string;
-    dueDate: string;
-    paymentStatus: string;
-    selectedCustomer: Customer;
-    addedProducts: Product[];
-    paymentMethod: string;
-    invoiceGeneratedBy: string;
-    totalAmount: number;
-    currencySymbol: string;
-}
+// interface PreviewInvoiceProps {
+//     invoiceId: string;
+//     invoiceConfig: InvoiceConfig;
+//     issuedDate: string;
+//     dueDate: string;
+//     paymentStatus: string;
+//     selectedCustomer: Customer;
+//     addedProducts: Product[];
+//     paymentMethod: string;
+//     invoiceGeneratedBy: string;
+//     totalAmount: number;
+//     currencySymbol: string;
+// }
 
 // Component
-const PreviewInvoice = forwardRef<HTMLDivElement, PreviewInvoiceProps>((props, ref) => {
+const PreviewInvoice = (props) => {
     const {
         invoiceId,
         invoiceConfig,
@@ -73,45 +73,7 @@ const PreviewInvoice = forwardRef<HTMLDivElement, PreviewInvoiceProps>((props, r
     const [loading, setLoading] = useState(false);
 
 
-    const getClodinaryUploadedUrl = async () => {
-        if (divRef.current) {
-            try {
-                // Capture canvas image
-                const canvas = await html2canvas(divRef.current);
-                const image = canvas.toDataURL('image/png');
-
-                // Convert base64 to Blob
-                const blob = await fetch(image).then(res => res.blob());
-
-                // Prepare FormData for Cloudinary upload
-                const formData = new FormData();
-                formData.append('file', blob);
-                formData.append('upload_preset', 'invoice-upload');
-                formData.append('folder', 'invoices');
-                // Upload to Cloudinary
-                const response = await fetch(`https://api.cloudinary.com/v1_1/ds3amr7w8/image/upload`, {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                const data = await response.json();
-                if (data.secure_url) {
-                    console.log('✅ Cloudinary URL:', data.secure_url);
-                    alert('Invoice uploaded successfully!');
-                    return data.secure_url;
-                } else {
-                    console.error('❌ Upload failed:', data);
-                    alert('Upload failed');
-                    return null;
-                }
-            } catch (error) {
-                console.error('🚨 Error uploading to Cloudinary:', error);
-                alert('Error uploading to Cloudinary');
-                return null;
-            }
-        }
-    };
-
+  
 
     const navigate = useNavigate();
 
@@ -308,6 +270,6 @@ const PreviewInvoice = forwardRef<HTMLDivElement, PreviewInvoiceProps>((props, r
             <ToastContainer />
         </>
     );
-});
+};
 
 export default PreviewInvoice;
