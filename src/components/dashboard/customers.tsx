@@ -161,6 +161,9 @@ export const Customers: React.FC = () => {
             toast.error('Failed to delete customer');
             setLoading(false);
         }
+        finally {
+            setLoading(false);
+          }
     };
     const toSnakeCase = (values: typeof formValues) => ({
         email: values.email,
@@ -175,6 +178,7 @@ export const Customers: React.FC = () => {
     
     const handleFormSubmit = async () => {
         setFormLoading(true);
+        setLoading(true)
         const payload = toSnakeCase(formValues);
         try {
             if (isEditing && editCustomerId) {
@@ -203,6 +207,7 @@ export const Customers: React.FC = () => {
             toast.error('Failed to submit form');
         } finally {
             setFormLoading(false);
+            setLoading(false)
         }
     };
 

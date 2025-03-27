@@ -22,6 +22,7 @@ import { RootState } from '../../store/store';
 // Import Chart.js and register necessary components
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import WalkthroughTour from '../walk-through';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -38,7 +39,7 @@ const Dashboard = () => {
     const authToken = useSelector((state: RootState) => state.auth.refreshToken);
     const currentYear = new Date().getFullYear();
     const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+   
     useEffect(() => {
         const fetchInvoices = async () => {
             setLoading(true);
@@ -104,6 +105,7 @@ const Dashboard = () => {
             <Backdrop open={loading} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                 <CircularProgress color="inherit" />
             </Backdrop>
+             <WalkthroughTour/>
 
             <Typography variant="h5" gutterBottom>
                 Invoicing Dashboard

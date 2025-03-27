@@ -124,6 +124,7 @@ export const Products = () => {
 
     const handleSave = async () => {
         try {
+            setLoading(true)
             const payload = {
                 name: formData.name,
                 category: formData.category,
@@ -148,6 +149,10 @@ export const Products = () => {
         } catch (err) {
             console.error('Error saving product:', err);
         }
+        finally {
+            setLoading(false);
+          }
+        
     };
 
     const handleEdit = (product: Product) => {
@@ -165,6 +170,7 @@ export const Products = () => {
     };
 
     const handleDelete = async (id: string) => {
+        setLoading(true)
         try {
             await axios.delete(`${API_URL}/product/${id}`, {
                 headers: { Authorization: `Bearer ${authToken}` },
@@ -173,6 +179,9 @@ export const Products = () => {
         } catch (err) {
             console.error('Error deleting product:', err);
         }
+        finally {
+            setLoading(false);
+          }
     };
 
     const columns: GridColDef[] = [

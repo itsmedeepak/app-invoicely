@@ -39,6 +39,7 @@ const UserProfile: React.FC = () => {
     email: "",
     phone: "",
     address: "",
+    walk_through:false
   });
 
   const userInfo = useSelector((state: RootState) => state.auth);
@@ -60,6 +61,7 @@ const UserProfile: React.FC = () => {
           lastName: data.last_name || "",
           email: data.email || "",
           phone: data.phone || "",
+          walk_through:false,
           address: "", // Assuming address isn't returned
         });
         // toast.success("Profile fetched successfully");

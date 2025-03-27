@@ -119,6 +119,7 @@ const Subscription: React.FC = () => {
     if (!billingInfo) return;
     try {
       setSavingBilling(true);
+      setLoading(true)
       const method = billingInfo._id ? "put" : "post";
       const url = `${API_URL}/billing${method === "put" ? `/${billingInfo._id}` : ""}`;
 
@@ -132,6 +133,7 @@ const Subscription: React.FC = () => {
       console.error("Billing save failed:", err);
       toast.error("Failed to save billing info");
     } finally {
+      setLoading(false)
       setSavingBilling(false);
     }
   };
