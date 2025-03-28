@@ -56,8 +56,7 @@ const MUICarousel: React.FC = () => {
           lastName: data.last_name || "",
           email: data.email || "",
           phone: data.phone || "",
-          
-          address: "", // Assuming address isn't returned
+          walk_through:data?.walk_through
         });
         
       } catch (error) {
@@ -95,6 +94,7 @@ const MUICarousel: React.FC = () => {
     }
   };
 
+  console.log(profile)
   return (
     <>
       {profile?.walk_through && activeStep >= 0 && (

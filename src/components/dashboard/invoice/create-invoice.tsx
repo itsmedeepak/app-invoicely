@@ -16,6 +16,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Dialog, DialogContent } from "@mui/material";
 import PreviewInvoice from "./preview-invoice";
+import { toast } from "react-toastify";
 
 interface Customer {
     _id: string;
@@ -87,35 +88,49 @@ const CreateInvoice: React.FC = () => {
                     headers: { Authorization: `Bearer ${authToken}` },
                 });
                 setCustomerList(customerRes.data.data);
-
+                if (!customerRes.data.data) {
+                    // toast.dismiss("customer_warning"); 
+                    toast.warn("Please add a customer from the customer section to create an invoice", { toastId: "customer_warning" });
+                }
+            
                 const productRes = await axios.get(`${API_URL}/product`, {
                     headers: { Authorization: `Bearer ${authToken}` },
                 });
                 setProductList(productRes.data.data);
-
+                if (!productRes.data.data) {
+                    // toast.dismiss("product_warning"); 
+                    toast.warn("Please add a product from the product section to create an invoice", { toastId: "product_warning" });
+                }
+            
                 const configRes = await axios.get(`${API_URL}/invoice-config`, {
                     headers: { Authorization: `Bearer ${authToken}` },
                 });
+            
+                if (!configRes.data.data) {
+                    // toast.dismiss("config_warning"); 
+                    toast.warn("Please add invoice configuration from the invoice section to create an invoice", { toastId: "config_warning" });
+                }
+            
                 setInvoiceConfig(configRes.data.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
-            }
-            finally {
+            } finally {
                 setLoading(false);
             }
+            
         };
         fetchData();
         setInvoiceId(generateInvoiceId())
     }, [authToken]);
 
-    const selectedCustomer = customerList.find(cust => cust._id === selectedCustomerId);
+    const selectedCustomer = customerList?.find(cust => cust._id === selectedCustomerId);
     const [issuedDate, setIssuedDate] = useState<Date | null>(new Date());
     const [dueDate, setDueDate] = useState<Date | null>(new Date());
     const [quantity, setQuantity] = useState<number>(1);
 
 
     const addProduct = () => {
-        const product = productList.find((prod) => prod._id === selectedProductId);
+        const product = productList?.find((prod) => prod._id === selectedProductId);
         if (product) {
             const newProduct: ProductWithQuantity = { ...product, quantity };
             setAddedProducts(prev => [...prev, newProduct]);
@@ -225,7 +240,7 @@ const CreateInvoice: React.FC = () => {
                     <FormControl fullWidth sx={{ mb: 2 }}>
                         <InputLabel>Select Customer</InputLabel>
                         <Select value={selectedCustomerId} onChange={(e) => setSelectedCustomerId(e.target.value)} label="Select Customer">
-                            {customerList.map((cust) => (
+                            {customerList?.map((cust) => (
                                 <MenuItem key={cust._id} value={cust._id}>
                                     {cust.first_name} {cust.last_name}
                                 </MenuItem>
@@ -274,7 +289,7 @@ const CreateInvoice: React.FC = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {addedProducts.map((prod, index) => {
+                                    {addedProducts?.map((prod, index) => {
                                         const finalPrice = prod.price - (prod.price * prod.discount) / 100;
                                         const totalPrice = finalPrice * prod.quantity;
                                         return (
@@ -302,7 +317,7 @@ const CreateInvoice: React.FC = () => {
                     <FormControl fullWidth sx={{ mb: 2 }}>
                         <InputLabel>Select Product</InputLabel>
                         <Select value={selectedProductId} onChange={(e) => setSelectedProductId(e.target.value)} label="Select Product">
-                            {productList.map((prod) => (
+                            {productList?.map((prod) => (
                                 <MenuItem key={prod._id} value={prod._id}>
                                     {prod.name}
                                 </MenuItem>
